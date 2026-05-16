@@ -80,6 +80,37 @@ p {
   background: var(--accent-bg);
   color: var(--text-h);
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  border-radius: 4px;
+  opacity: 0.5;
+  flex-shrink: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.remove-btn:hover {
+  opacity: 1;
+  color: #f87171;
+}
+
+.error-message {
+  color: #f87171;
+  font-size: 0.875rem;
+  text-align: left;
+  max-width: none;
+  margin: 0;
 }
 
 .empty-state {

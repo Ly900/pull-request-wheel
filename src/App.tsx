@@ -4,12 +4,29 @@ import './App.css';
 function App() {
   const [names, setNames] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState('');
 
   const addName = () => {
     const trimmed = inputValue.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setError('Please enter a name.');
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+
+    if (names.some((n) => n.toLowerCase() === trimmed.toLowerCase())) {
+      setError(`"${trimmed}" is already on the team.`);
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+
     setNames([...names, trimmed]);
     setInputValue('');
+    setError('');
+  };
+
+  const removeName = (index: number) => {
+    setNames(names.filter((_, i) => i !== index));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -34,12 +51,24 @@ function App() {
             <button type="button" onClick={addName}>Add</button>
           </div>
 
+          {error && <p className="error-message">{error}</p>}
+
           <div className="team-members">
             <h2>Team Members</h2>
             {names.length > 0 ? (
               <ul className="dev-list">
                 {names.map((name, index) => (
-                  <li key={index}>{name}</li>
+                  <li key={index}>
+                    <span>{name}</span>
+                    <button
+                      type="button"
+                      className="remove-btn"
+                      onClick={() => removeName(index)}
+                      aria-label={`Remove ${name}`}
+                    >
+                      ×
+                    </button>
+                  </li>
                 ))}
               </ul>
             ) : (
