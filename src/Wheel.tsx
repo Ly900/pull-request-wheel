@@ -16,19 +16,22 @@ export default function Wheel({ names }: WheelProps) {
   const rotationRef = useRef(0);
   const animFrameRef = useRef<number>(0);
 
+  const ARROW_SPACE = 32; // px reserved above wheel for arrow
+
   const drawWheel = useCallback((rotation: number) => {
     const canvas = canvasRef.current;
     if (!canvas || names.length === 0) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const size = canvas.width;
-    const cx = size / 2;
-    const cy = size / 2;
-    const radius = size / 2 - 8;
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = ARROW_SPACE + (h - ARROW_SPACE) / 2;
+    const radius = (h - ARROW_SPACE) / 2 - 8;
     const sliceAngle = (2 * Math.PI) / names.length;
 
-    ctx.clearRect(0, 0, size, size);
+    ctx.clearRect(0, 0, w, h);
 
     // Draw slices
     names.forEach((name, i) => {
@@ -69,9 +72,9 @@ export default function Wheel({ names }: WheelProps) {
     ctx.stroke();
 
     // Pointer arrow (outside wheel at top, pointing down into wheel)
-    const arrowTip = cy - radius + 2;   // tip just inside the wheel edge
-    const arrowBase = arrowTip - 36;    // base 36px above the tip
-    const arrowHalfWidth = 16;
+    const arrowTip = cy - radius + 4;   // tip just inside the wheel edge
+    const arrowBase = arrowTip - 28;    // base 28px above the tip
+    const arrowHalfWidth = 13;
     ctx.beginPath();
     ctx.moveTo(cx, arrowTip);                          // tip
     ctx.lineTo(cx - arrowHalfWidth, arrowBase);        // bottom-left
@@ -80,7 +83,7 @@ export default function Wheel({ names }: WheelProps) {
     ctx.fillStyle = '#f3f4f6';
     ctx.fill();
     ctx.strokeStyle = '#16171d';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
   }, [names]);
 
@@ -142,8 +145,8 @@ export default function Wheel({ names }: WheelProps) {
     <div className="wheel">
       <canvas
         ref={canvasRef}
-        width={420}
-        height={420}
+        width={560}
+        height={560}
         className="wheel__canvas"
       />
       <button
