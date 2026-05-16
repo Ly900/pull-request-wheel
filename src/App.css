@@ -3,11 +3,29 @@ p {
   margin: 0 auto;
 }
 
+/* ── Two-column layout ── */
+.layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Left sidebar: input + team member list ── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 280px;
+  flex-shrink: 0;
+}
+
 .add-dev {
   display: flex;
   gap: 0.5rem;
-  justify-content: center;
-  margin-top: 2rem;
 }
 
 .add-dev input {
@@ -17,7 +35,8 @@ p {
   border-radius: 6px;
   background: var(--bg);
   color: var(--text-h);
-  width: 16rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .add-dev input:focus {
@@ -33,26 +52,51 @@ p {
   background: var(--accent);
   color: #fff;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .add-dev button:hover {
   opacity: 0.85;
 }
 
+/* ── Team Members section ── */
+.team-members h2 {
+  margin-bottom: 0.5rem;
+}
+
 .dev-list {
   list-style: none;
   padding: 0;
-  margin: 1.5rem auto 0;
-  max-width: 20rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   text-align: left;
 }
 
 .dev-list li {
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--border);
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  background: var(--accent-bg);
   color: var(--text-h);
+  font-size: 0.95rem;
 }
 
-.dev-list li:first-child {
-  border-top: 1px solid var(--border);
+.empty-state {
+  color: var(--text);
+  font-size: 0.9rem;
+  text-align: left;
+  max-width: none;
+  margin: 0;
+}
+
+/* ── Right wheel area ── */
+.wheel-area {
+  flex: 1;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
 }
