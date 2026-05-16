@@ -29,8 +29,6 @@ function App() {
     setNames(names.filter((_, i) => i !== index));
   };
 
-  console.log('names:', names);
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') addName();
   };
