@@ -1,17 +1,31 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './App.css';
 import Wheel, { SOUND_OPTIONS } from './Wheel';
+import Confetti from './Confetti';
 
 function App() {
-  const [names, setNames] = useState<string[]>([]);
+  const load = <T,>(key: string, fallback: T): T => {
+    try { return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; } catch { return fallback; }
+  };
+
+  const [names, setNames] = useState<string[]>(() => load('prw_names', []));
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
-  const [history, setHistory] = useState<string[]>([]);
-  const [noRepeats, setNoRepeats] = useState(false);
-  const [devsOnly, setDevsOnly] = useState(false);
-  const [qaOnly, setQaOnly] = useState(false);
+  const [history, setHistory] = useState<string[]>(() => load('prw_history', []));
+  const [noRepeats, setNoRepeats] = useState<boolean>(() => load('prw_noRepeats', false));
+  const [devsOnly, setDevsOnly] = useState<boolean>(() => load('prw_devsOnly', false));
+  const [qaOnly, setQaOnly] = useState<boolean>(() => load('prw_qaOnly', false));
   const [wheelKey, setWheelKey] = useState(0);
-  const [sound, setSound] = useState('evil-laugh');
+  const [sound, setSound] = useState<string>(() => load('prw_sound', 'evil-laugh'));
+  const [confettiKey, setConfettiKey] = useState(0);
+  const [confettiActive, setConfettiActive] = useState(false);
+
+  useEffect(() => { localStorage.setItem('prw_names', JSON.stringify(names)); }, [names]);
+  useEffect(() => { localStorage.setItem('prw_history', JSON.stringify(history)); }, [history]);
+  useEffect(() => { localStorage.setItem('prw_noRepeats', JSON.stringify(noRepeats)); }, [noRepeats]);
+  useEffect(() => { localStorage.setItem('prw_devsOnly', JSON.stringify(devsOnly)); }, [devsOnly]);
+  useEffect(() => { localStorage.setItem('prw_qaOnly', JSON.stringify(qaOnly)); }, [qaOnly]);
+  useEffect(() => { localStorage.setItem('prw_sound', JSON.stringify(sound)); }, [sound]);
 
   const QA_MEMBERS = ['Regina', 'Sage'];
   const CMD_R_TEAM = ['Matt', 'Deepak', 'Joey', 'Mohan', 'Ly', 'Regina', 'Sage'];
@@ -90,6 +104,7 @@ function App() {
 
   return (
     <>
+      <Confetti key={confettiKey} active={confettiActive} />
       <h1><span style={{ fontSize: '1em', verticalAlign: 'top' }}>💀</span> Pull Request Wheel of Death</h1>
       <p>Not sure who to assign the pull request to? Fret no more. Avoid those glares you get when you assign to the same dev over and over again. Blame it on the Wheel of Death!</p>
 
@@ -173,15 +188,6 @@ function App() {
           <div className="team-members">
             <div className="team-members__header">
               <h2>Team Members</h2>
-              {names.length > 0 && (
-                <button
-                  type="button"
-                  className="team-members__clear-btn"
-                  onClick={() => { setNames([]); setHistory([]); setNoRepeats(false); setDevsOnly(false); setQaOnly(false); setWheelKey((k) => k + 1); }}
-                >
-                  Start Over
-                </button>
-              )}
             </div>
             {names.length === 0 ? (
               <p className="team-members__empty">No team members added yet.</p>
@@ -207,6 +213,16 @@ function App() {
             )}
           </div>
 
+          {(names.length > 0 || history.length > 0) && (
+            <button
+              type="button"
+              className="reset-btn"
+              onClick={() => { setNames([]); setHistory([]); setNoRepeats(false); setDevsOnly(false); setQaOnly(false); setWheelKey((k) => k + 1); }}
+            >
+              Reset Everything
+            </button>
+          )}
+
         </aside>
 
         <main className="wheel-area">
@@ -219,7 +235,11 @@ function App() {
               if (noRepeats) filtered = filtered.filter((n) => !history.includes(n));
               return filtered;
             })()}
-            onWinner={(name) => setHistory((h) => [name, ...h])}
+            onWinner={(name) => {
+              setHistory((h) => [name, ...h]);
+              setConfettiKey((k) => k + 1);
+              setConfettiActive(true);
+            }}
             sound={sound}
           />
         </main>
