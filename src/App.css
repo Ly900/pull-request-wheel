@@ -3,15 +3,21 @@ p {
   margin: 0 auto;
 }
 
-/* ── Two-column layout ── */
+/* ── Two-column layout (mobile-first: stack vertically) ── */
 .layout {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 2rem;
   margin-top: 2.5rem;
   flex: 1;
   min-height: 0;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }
 
 /* ── Left sidebar: input + team member list ── */
@@ -19,8 +25,14 @@ p {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 280px;
-  flex-shrink: 0;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+  }
 }
 
 .add-dev {
@@ -72,6 +84,17 @@ p {
   flex-direction: column;
   gap: 0.4rem;
   text-align: left;
+}
+
+@media (min-width: 620px) {
+  .dev-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .dev-list li {
+    width: fit-content;
+  }
 }
 
 .dev-list li {
