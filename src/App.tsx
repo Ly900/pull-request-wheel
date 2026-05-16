@@ -29,6 +29,26 @@ function App() {
     setNames(names.filter((_, i) => i !== index));
   };
 
+  const CMD_R_TEAM = ['Matt', 'Deepak', 'Joey', 'Mohan', 'Ly', 'Regina', 'Sage'];
+
+  const addCmdRTeam = () => {
+    const allPresent = CMD_R_TEAM.every((name) =>
+      names.some((n) => n.toLowerCase() === name.toLowerCase())
+    );
+    if (allPresent) {
+      setError('Cmd+R team is already added.');
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+    const merged = [...names];
+    for (const name of CMD_R_TEAM) {
+      if (!merged.some((n) => n.toLowerCase() === name.toLowerCase())) {
+        merged.push(name);
+      }
+    }
+    setNames(merged);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') addName();
   };
@@ -42,27 +62,43 @@ function App() {
         <aside className="sidebar">
           <div className="add-dev">
             <input
+              className="add-dev__input"
               type="text"
               placeholder="Enter name"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <button type="button" onClick={addName}>Add</button>
+            <button type="button" className="add-dev__btn" onClick={addName}>Add</button>
           </div>
 
-          {error && <p className="error-message">{error}</p>}
+          {error && <p className="add-dev__error">{error}</p>}
+
+          <button type="button" className="add-dev__preset-btn" onClick={addCmdRTeam}>
+            + Add Cmd+R Team
+          </button>
 
           <div className="team-members">
-            <h2>Team Members</h2>
+            <div className="team-members__header">
+              <h2>Team Members</h2>
+              {names.length > 0 && (
+                <button
+                  type="button"
+                  className="team-members__clear-btn"
+                  onClick={() => setNames([])}
+                >
+                  Start Over
+                </button>
+              )}
+            </div>
             {names.length > 0 ? (
               <ul className="dev-list">
                 {names.map((name, index) => (
-                  <li key={index}>
+                  <li key={index} className="dev-list__item">
                     <span>{name}</span>
                     <button
                       type="button"
-                      className="remove-btn"
+                      className="dev-list__remove-btn"
                       onClick={() => removeName(index)}
                       aria-label={`Remove ${name}`}
                     >
@@ -72,7 +108,7 @@ function App() {
                 ))}
               </ul>
             ) : (
-              <p className="empty-state">No team members added yet.</p>
+              <p className="team-members__empty">No team members added yet.</p>
             )}
           </div>
         </aside>

@@ -35,12 +35,13 @@ p {
   }
 }
 
+/* ── Add dev form ── */
 .add-dev {
   display: flex;
   gap: 0.5rem;
 }
 
-.add-dev input {
+.add-dev__input {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   border: 1px solid #9ca3af;
@@ -51,12 +52,12 @@ p {
   min-width: 0;
 }
 
-.add-dev input:focus {
+.add-dev__input:focus {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.add-dev button {
+.add-dev__btn {
   padding: 0.5rem 1rem;
   font-size: 1rem;
   border-radius: 6px;
@@ -68,15 +69,71 @@ p {
   transition: box-shadow 0.2s;
 }
 
-.add-dev button:hover {
+.add-dev__btn:hover {
   box-shadow: 0 0 14px rgba(239, 68, 68, 0.7);
 }
 
+.add-dev__error {
+  color: #f87171;
+  font-size: 0.875rem;
+  text-align: left;
+  max-width: none;
+  margin: 0;
+}
+
+.add-dev__preset-btn {
+  background: none;
+  border: 1px dashed #6b7280;
+  color: var(--text);
+  font-size: 0.875rem;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.add-dev__preset-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ── Team Members section ── */
-.team-members h2 {
+.team-members__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   margin-bottom: 0.75rem;
 }
 
+.team-members__header h2 {
+  margin: 0;
+}
+
+.team-members__clear-btn {
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.team-members__clear-btn:hover {
+  opacity: 1;
+}
+
+.team-members__empty {
+  color: var(--text);
+  font-size: 0.9rem;
+  text-align: left;
+  max-width: none;
+  margin: 0;
+}
+
+/* ── Dev list ── */
 .dev-list {
   list-style: none;
   padding: 0;
@@ -88,11 +145,8 @@ p {
   text-align: left;
 }
 
-.dev-list li {
+.dev-list__item {
   width: fit-content;
-}
-
-.dev-list li {
   padding: 0.4rem 0.75rem;
   border-radius: 6px;
   background: var(--accent-bg);
@@ -104,7 +158,7 @@ p {
   gap: 0.5rem;
 }
 
-.remove-btn {
+.dev-list__remove-btn {
   background: none;
   border: none;
   color: var(--text);
@@ -118,25 +172,9 @@ p {
   transition: opacity 0.15s, color 0.15s;
 }
 
-.remove-btn:hover {
+.dev-list__remove-btn:hover {
   opacity: 1;
   color: #f87171;
-}
-
-.error-message {
-  color: #f87171;
-  font-size: 0.875rem;
-  text-align: left;
-  max-width: none;
-  margin: 0;
-}
-
-.empty-state {
-  color: var(--text);
-  font-size: 0.9rem;
-  text-align: left;
-  max-width: none;
-  margin: 0;
 }
 
 /* ── Right wheel area ── */
