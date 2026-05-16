@@ -43,7 +43,7 @@ p {
 .add-dev input {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
-  border: 1px solid var(--border);
+  border: 1px solid #9ca3af;
   border-radius: 6px;
   background: var(--bg);
   color: var(--text-h);
@@ -61,7 +61,7 @@ p {
   font-size: 1rem;
   border-radius: 6px;
   border: none;
-  background: var(--accent);
+  background: #2563eb;
   color: #fff;
   cursor: pointer;
   white-space: nowrap;
