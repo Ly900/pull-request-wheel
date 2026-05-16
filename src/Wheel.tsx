@@ -13,8 +13,22 @@ export default function Wheel({ names }: WheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
+  const [canvasSize, setCanvasSize] = useState(500);
   const rotationRef = useRef(0);
   const animFrameRef = useRef<number>(0);
+
+  // Responsively size the canvas to fit the viewport height
+  useEffect(() => {
+    const updateSize = () => {
+      // Reserve ~380px for header, paragraph, input, buttons, padding
+      const available = window.innerHeight - 380;
+      const size = Math.max(240, Math.min(460, available));
+      setCanvasSize(size);
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   const ARROW_SPACE = 32; // px reserved above wheel for arrow
 
@@ -89,7 +103,7 @@ export default function Wheel({ names }: WheelProps) {
 
   useEffect(() => {
     drawWheel(rotationRef.current);
-  }, [drawWheel]);
+  }, [drawWheel, canvasSize]);
 
   const spin = () => {
     if (spinning || names.length === 0) return;
@@ -145,8 +159,8 @@ export default function Wheel({ names }: WheelProps) {
     <div className="wheel">
       <canvas
         ref={canvasRef}
-        width={560}
-        height={560}
+        width={canvasSize}
+        height={canvasSize}
         className="wheel__canvas"
       />
       <button
@@ -157,11 +171,9 @@ export default function Wheel({ names }: WheelProps) {
       >
         {spinning ? 'Spinning…' : 'Spin!'}
       </button>
-      {winner && !spinning && (
-        <p className="wheel__result">
-          💀 <strong>{winner}</strong> gets the PR!
-        </p>
-      )}
+      <p className="wheel__result" aria-live="polite">
+        {winner && !spinning ? <>💀 <strong>{winner}</strong> gets the PR!</> : <>&nbsp;</>}
+      </p>
     </div>
   );
 }
