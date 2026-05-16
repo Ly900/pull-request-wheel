@@ -61,14 +61,15 @@ p {
   font-size: 1rem;
   border-radius: 6px;
   border: none;
-  background: #2563eb;
+  background: #dc2626;
   color: #fff;
   cursor: pointer;
   white-space: nowrap;
+  transition: box-shadow 0.2s;
 }
 
 .add-dev button:hover {
-  opacity: 0.85;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.7);
 }
 
 /* ── Team Members section ── */
