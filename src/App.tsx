@@ -16,7 +16,7 @@ function App() {
   const [devsOnly, setDevsOnly] = useState<boolean>(() => load('prw_devsOnly', false));
   const [qaOnly, setQaOnly] = useState<boolean>(() => load('prw_qaOnly', false));
   const [wheelKey, setWheelKey] = useState(0);
-  const [sound, setSound] = useState<string>(() => load('prw_sound', 'evil-laugh'));
+  const [sound, setSound] = useState<string>(() => load('prw_sound', 'price-is-right'));
   const [confettiKey, setConfettiKey] = useState(0);
   const [confettiActive, setConfettiActive] = useState(false);
 

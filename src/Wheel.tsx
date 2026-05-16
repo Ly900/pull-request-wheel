@@ -20,7 +20,7 @@ interface WheelProps {
   sound?: string;
 }
 
-export default function Wheel({ names, onWinner, sound = 'evil-laugh' }: WheelProps) {
+export default function Wheel({ names, onWinner, sound = 'price-is-right' }: WheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
