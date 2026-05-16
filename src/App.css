@@ -105,8 +105,9 @@ p {
 /* ── Team Members section ── */
 .team-members__header {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
   margin-bottom: 0.75rem;
 }
 
@@ -122,6 +123,7 @@ p {
   cursor: pointer;
   padding: 0;
   opacity: 0.7;
+  margin-top: 2px;
   transition: opacity 0.15s;
 }
 
@@ -182,10 +184,23 @@ p {
 }
 
 /* ── PR History ── */
+.pr-history {
+  text-align: left;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 780px) {
+  .pr-history {
+    grid-column: 1; /* sidebar column */
+    grid-row: 2;
+  }
+}
+
 .pr-history__header {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
   margin-bottom: 0.75rem;
 }
 
@@ -223,6 +238,13 @@ p {
   align-items: center;
   justify-content: center;
   align-self: stretch;
+}
+
+@media (min-width: 780px) {
+  .wheel-area {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
 }
 
 

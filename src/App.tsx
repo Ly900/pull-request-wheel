@@ -114,33 +114,34 @@ function App() {
             )}
           </div>
 
-          {history.length > 0 && (
-            <div className="pr-history">
-              <div className="pr-history__header">
-                <h2>PR Assignees</h2>
-                <button
-                  type="button"
-                  className="team-members__clear-btn"
-                  onClick={() => setHistory([])}
-                >
-                  Clear
-                </button>
-              </div>
-              <ol className="pr-history__list">
-                {history.map((name, i) => (
-                  <li key={i} className="pr-history__item">
-                    <span className="pr-history__rank">#{history.length - i}</span>
-                    <span>{name}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
         </aside>
 
         <main className="wheel-area">
           <Wheel names={names} onWinner={(name) => setHistory((h) => [name, ...h])} />
         </main>
+
+        {history.length > 0 && (
+          <div className="pr-history">
+            <div className="pr-history__header">
+              <h2>PR Assignees</h2>
+              <button
+                type="button"
+                className="team-members__clear-btn"
+                onClick={() => setHistory([])}
+              >
+                Clear
+              </button>
+            </div>
+            <ol className="pr-history__list">
+              {history.map((name, i) => (
+                <li key={i} className="pr-history__item">
+                  <span className="pr-history__rank">#{history.length - i}</span>
+                  <span>{name}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
     </>
   );
