@@ -111,10 +111,33 @@ export default function Wheel({ names, onWinner }: WheelProps) {
     drawWheel(rotationRef.current);
   }, [drawWheel, canvasSize]);
 
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const lastTickAngleRef = useRef(0);
+
+  const playTick = (speed: number) => {
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContext();
+      }
+      const ctx = audioCtxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(600 + speed * 200, ctx.currentTime);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.04);
+    } catch (_) { /* ignore */ }
+  };
+
   const spin = () => {
     if (spinning || names.length === 0) return;
     setWinner(null);
     setSpinning(true);
+    lastTickAngleRef.current = rotationRef.current;
 
     const sliceAngle = (2 * Math.PI) / names.length;
     // Pick a random winner index
@@ -138,6 +161,17 @@ export default function Wheel({ names, onWinner }: WheelProps) {
       // Ease out cubic
       const eased = 1 - Math.pow(1 - t, 3);
       const current = startRotation + (endRotation - startRotation) * eased;
+
+      // Play tick when crossing a slice boundary
+      const prevSlice = Math.floor(lastTickAngleRef.current / sliceAngle);
+      const currSlice = Math.floor(current / sliceAngle);
+      if (currSlice !== prevSlice) {
+        // speed: derivative of eased at t, normalized 0-1
+        const speed = Math.max(0, 1 - Math.pow(1 - t, 2));
+        playTick(speed);
+        lastTickAngleRef.current = current;
+      }
+
       rotationRef.current = current;
       drawWheel(current);
 

@@ -28,7 +28,6 @@ p {
   gap: 0.75rem;
   margin-top: 1.5rem;
   min-width: 0;
-  overflow: hidden;
 }
 
 /* ── Add dev form ── */
@@ -36,7 +35,6 @@ p {
   display: flex;
   gap: 0.5rem;
   max-width: 100%;
-  overflow: hidden;
 }
 
 .add-dev__input {

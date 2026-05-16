@@ -13,6 +13,8 @@ function App() {
   const [wheelKey, setWheelKey] = useState(0);
 
   const QA_MEMBERS = ['Regina', 'Sage'];
+  const CMD_R_TEAM = ['Matt', 'Deepak', 'Joey', 'Mohan', 'Ly', 'Regina', 'Sage'];
+  const ALL_TEAM_MEMBERS = CMD_R_TEAM;
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showError = (msg: string) => {
@@ -33,16 +35,26 @@ function App() {
       return;
     }
 
-    setNames([...names, trimmed]);
+    const newNames = [...names, trimmed];
+    setNames(newNames);
     setInputValue('');
     setError('');
+    // If the new name is not a known team member, hide the role filter
+    if (!ALL_TEAM_MEMBERS.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
+      setDevsOnly(false);
+      setQaOnly(false);
+    }
   };
 
   const removeName = (index: number) => {
-    setNames(names.filter((_, i) => i !== index));
+    const newNames = names.filter((_, i) => i !== index);
+    setNames(newNames);
+    // If no QA members remain, reset role filters
+    if (!newNames.some((n) => QA_MEMBERS.includes(n))) {
+      setDevsOnly(false);
+      setQaOnly(false);
+    }
   };
-
-  const CMD_R_TEAM = ['Matt', 'Deepak', 'Joey', 'Mohan', 'Ly', 'Regina', 'Sage'];
 
   const addCmdRTeam = () => {
     const allPresent = CMD_R_TEAM.every((name) =>
@@ -65,6 +77,10 @@ function App() {
     if (e.key === 'Enter') addName();
   };
 
+  const hasQaMember =
+    names.some((n) => QA_MEMBERS.includes(n)) &&
+    names.every((n) => ALL_TEAM_MEMBERS.some((t) => t.toLowerCase() === n.toLowerCase()));
+
   const displayedNames = devsOnly
     ? names.filter((n) => !QA_MEMBERS.includes(n))
     : qaOnly
@@ -78,6 +94,10 @@ function App() {
 
       <div className="layout">
         <aside className="sidebar">
+          <p className="add-dev__error" aria-live="polite">
+            {error || <>&nbsp;</>}
+          </p>
+
           <div className="add-dev">
             <input
               className="add-dev__input"
@@ -89,10 +109,6 @@ function App() {
             />
             <button type="button" className="add-dev__btn" onClick={addName}>Add</button>
           </div>
-
-          <p className="add-dev__error" aria-live="polite">
-            {error || <>&nbsp;</>}
-          </p>
 
           <button type="button" className="add-dev__preset-btn" onClick={addCmdRTeam}>
             + Add Cmd+R Team
@@ -107,36 +123,38 @@ function App() {
               />
               No repeats
             </label>
-            <div className="wheel-filters__group">
-              <span className="wheel-filters__group-label">Filter by role</span>
-              <label className="no-repeats-toggle">
-                <input
-                  type="radio"
-                  name="role-filter"
-                  checked={!devsOnly && !qaOnly}
-                  onChange={() => { setDevsOnly(false); setQaOnly(false); }}
-                />
-                All
-              </label>
-              <label className="no-repeats-toggle">
-                <input
-                  type="radio"
-                  name="role-filter"
-                  checked={devsOnly}
-                  onChange={() => { setDevsOnly(true); setQaOnly(false); }}
-                />
-                Devs only
-              </label>
-              <label className="no-repeats-toggle">
-                <input
-                  type="radio"
-                  name="role-filter"
-                  checked={qaOnly}
-                  onChange={() => { setQaOnly(true); setDevsOnly(false); }}
-                />
-                QA only
-              </label>
-            </div>
+            {hasQaMember && (
+              <div className="wheel-filters__group">
+                <span className="wheel-filters__group-label">Filter by role</span>
+                <label className="no-repeats-toggle">
+                  <input
+                    type="radio"
+                    name="role-filter"
+                    checked={!devsOnly && !qaOnly}
+                    onChange={() => { setDevsOnly(false); setQaOnly(false); }}
+                  />
+                  All
+                </label>
+                <label className="no-repeats-toggle">
+                  <input
+                    type="radio"
+                    name="role-filter"
+                    checked={devsOnly}
+                    onChange={() => { setDevsOnly(true); setQaOnly(false); }}
+                  />
+                  Devs only
+                </label>
+                <label className="no-repeats-toggle">
+                  <input
+                    type="radio"
+                    name="role-filter"
+                    checked={qaOnly}
+                    onChange={() => { setQaOnly(true); setDevsOnly(false); }}
+                  />
+                  QA only
+                </label>
+              </div>
+            )}
           </div>
 
           <div className="team-members">
