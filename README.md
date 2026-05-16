@@ -1,6 +1,6 @@
 # 💀 Pull Request Wheel of Death
 
-Not sure who to assign the pull request to? Fret no more. Avoid those glares you get when you assign to the same dev over and over again. Blame it on the Wheel of Death!
+Not sure who to assign the pull request to? Fret no more. Let the Wheel of Death make the tough decisions so you don't have to. Completely fair, totally random, and absolutely not your fault.
 
 ## 🚀 Live App
 

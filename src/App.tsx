@@ -106,7 +106,7 @@ function App() {
     <>
       <Confetti key={confettiKey} active={confettiActive} />
       <h1><span style={{ fontSize: '1em', verticalAlign: 'top' }}>💀</span> Pull Request Wheel of Death</h1>
-      <p>Not sure who to assign the pull request to? Fret no more. Avoid those glares you get when you assign to the same dev over and over again. Blame it on the Wheel of Death!</p>
+      <p>Not sure who to assign the pull request to? Fret no more. Let the Wheel of Death make the tough decisions so you don't have to. Completely fair, totally random, and absolutely not your fault.</p>
 
       <div className="layout">
         <aside className="sidebar">
