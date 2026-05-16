@@ -15,12 +15,15 @@ export default function Wheel({ names, onWinner }: WheelProps) {
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [canvasSize, setCanvasSize] = useState(500);
+  const [isDesktop, setIsDesktop] = useState(false);
   const rotationRef = useRef(0);
   const animFrameRef = useRef<number>(0);
 
   // Responsively size the canvas to fit the viewport height
   useEffect(() => {
     const updateSize = () => {
+      const desktop = window.innerWidth >= 780;
+      setIsDesktop(desktop);
       // On mobile, constrain to viewport width minus padding
       const maxByWidth = window.innerWidth - 48;
       // Reserve ~380px for header, paragraph, input, buttons, padding
@@ -158,7 +161,10 @@ export default function Wheel({ names, onWinner }: WheelProps) {
   return (
     <div className="wheel">
       {names.length === 0 ? (
-        <div className="wheel__placeholder">
+        <div
+          className="wheel__placeholder"
+          style={isDesktop ? { width: canvasSize, height: canvasSize } : undefined}
+        >
           <p className="wheel__empty">Add team members to spin the wheel!</p>
         </div>
       ) : (
@@ -169,17 +175,21 @@ export default function Wheel({ names, onWinner }: WheelProps) {
           className="wheel__canvas"
         />
       )}
-      <button
-        type="button"
-        className="wheel__spin-btn"
-        onClick={spin}
-        disabled={spinning || names.length === 0}
-      >
-        {spinning ? 'Spinning…' : 'Spin!'}
-      </button>
-      <p className="wheel__result" aria-live="polite">
-        {winner && !spinning ? <>💀 <strong>{winner}</strong> gets the PR!</> : <>&nbsp;</>}
-      </p>
+      {names.length > 0 && (
+        <>
+          <button
+            type="button"
+            className="wheel__spin-btn"
+            onClick={spin}
+            disabled={spinning}
+          >
+            {spinning ? 'Spinning…' : 'Spin!'}
+          </button>
+          <p className="wheel__result" aria-live="polite">
+            {winner && !spinning ? <>💀 <strong>{winner}</strong> gets the PR!</> : <>&nbsp;</>}
+          </p>
+        </>
+      )}
     </div>
   );
 }

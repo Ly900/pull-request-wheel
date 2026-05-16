@@ -17,8 +17,8 @@
   --heading: 'Playfair Display', Georgia, serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  font: 16px/142% var(--sans);
+  letter-spacing: 0.16px;
   color-scheme: dark;
   color: var(--text);
   background: var(--bg);
@@ -28,7 +28,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
@@ -81,22 +81,22 @@ h2 {
 }
 
 h1 {
-  font-size: 56px;
+  font-size: 46px;
   line-height: 1.15;
   letter-spacing: -0.01em;
-  margin: 16px 0;
+  margin: 12px 0 16px;
   @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 12px 0;
+    font-size: 32px;
+    margin: 10px 0 12px;
   }
 }
 h2 {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 118%;
   letter-spacing: 0.04em;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 17px;
   }
 }
 p {

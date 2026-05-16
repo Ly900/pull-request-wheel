@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './App.css';
 import Wheel from './Wheel';
 
@@ -7,18 +7,29 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
   const [history, setHistory] = useState<string[]>([]);
+  const [noRepeats, setNoRepeats] = useState(false);
+  const [devsOnly, setDevsOnly] = useState(false);
+  const [qaOnly, setQaOnly] = useState(false);
+  const [wheelKey, setWheelKey] = useState(0);
+
+  const QA_MEMBERS = ['Regina', 'Sage'];
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showError = (msg: string) => {
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    setError(msg);
+    errorTimerRef.current = setTimeout(() => setError(''), 3000);
+  };
 
   const addName = () => {
     const trimmed = inputValue.trim();
     if (!trimmed) {
-      setError('Please enter a name.');
-      setTimeout(() => setError(''), 3000);
+      showError('Please enter a name.');
       return;
     }
 
     if (names.some((n) => n.toLowerCase() === trimmed.toLowerCase())) {
-      setError(`"${trimmed}" is already on the team.`);
-      setTimeout(() => setError(''), 3000);
+      showError(`"${trimmed}" is already on the team.`);
       return;
     }
 
@@ -38,8 +49,7 @@ function App() {
       names.some((n) => n.toLowerCase() === name.toLowerCase())
     );
     if (allPresent) {
-      setError('Cmd+R team is already added.');
-      setTimeout(() => setError(''), 3000);
+      showError('Cmd+R team is already added.');
       return;
     }
     const merged = [...names];
@@ -54,6 +64,12 @@ function App() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') addName();
   };
+
+  const displayedNames = devsOnly
+    ? names.filter((n) => !QA_MEMBERS.includes(n))
+    : qaOnly
+    ? names.filter((n) => QA_MEMBERS.includes(n))
+    : names;
 
   return (
     <>
@@ -74,11 +90,54 @@ function App() {
             <button type="button" className="add-dev__btn" onClick={addName}>Add</button>
           </div>
 
-          {error && <p className="add-dev__error">{error}</p>}
+          <p className="add-dev__error" aria-live="polite">
+            {error || <>&nbsp;</>}
+          </p>
 
           <button type="button" className="add-dev__preset-btn" onClick={addCmdRTeam}>
             + Add Cmd+R Team
           </button>
+
+          <div className="wheel-filters">
+            <label className="no-repeats-toggle">
+              <input
+                type="checkbox"
+                checked={noRepeats}
+                onChange={(e) => setNoRepeats(e.target.checked)}
+              />
+              No repeats
+            </label>
+            <div className="wheel-filters__group">
+              <span className="wheel-filters__group-label">Filter by role</span>
+              <label className="no-repeats-toggle">
+                <input
+                  type="radio"
+                  name="role-filter"
+                  checked={!devsOnly && !qaOnly}
+                  onChange={() => { setDevsOnly(false); setQaOnly(false); }}
+                />
+                All
+              </label>
+              <label className="no-repeats-toggle">
+                <input
+                  type="radio"
+                  name="role-filter"
+                  checked={devsOnly}
+                  onChange={() => { setDevsOnly(true); setQaOnly(false); }}
+                />
+                Devs only
+              </label>
+              <label className="no-repeats-toggle">
+                <input
+                  type="radio"
+                  name="role-filter"
+                  checked={qaOnly}
+                  onChange={() => { setQaOnly(true); setDevsOnly(false); }}
+                />
+                QA only
+              </label>
+            </div>
+          </div>
 
           <div className="team-members">
             <div className="team-members__header">
@@ -87,61 +146,72 @@ function App() {
                 <button
                   type="button"
                   className="team-members__clear-btn"
-                  onClick={() => setNames([])}
+                  onClick={() => { setNames([]); setHistory([]); setNoRepeats(false); setDevsOnly(false); setQaOnly(false); setWheelKey((k) => k + 1); }}
                 >
                   Start Over
                 </button>
               )}
             </div>
-            {names.length > 0 ? (
-              <ul className="dev-list">
-                {names.map((name, index) => (
-                  <li key={index} className="dev-list__item">
-                    <span>{name}</span>
-                    <button
-                      type="button"
-                      className="dev-list__remove-btn"
-                      onClick={() => removeName(index)}
-                      aria-label={`Remove ${name}`}
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
+            {names.length === 0 ? (
               <p className="team-members__empty">No team members added yet.</p>
+            ) : (
+              <ul className="dev-list">
+                {displayedNames.map((name) => {
+                  const index = names.indexOf(name);
+                  return (
+                    <li key={name} className="dev-list__item">
+                      <span>{name}</span>
+                      <button
+                        type="button"
+                        className="dev-list__remove-btn"
+                        onClick={() => removeName(index)}
+                        aria-label={`Remove ${name}`}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
           </div>
 
         </aside>
 
         <main className="wheel-area">
-          <Wheel names={names} onWinner={(name) => setHistory((h) => [name, ...h])} />
+          <Wheel
+            key={wheelKey}
+            names={(() => {
+              let filtered = names;
+              if (devsOnly) filtered = filtered.filter((n) => !QA_MEMBERS.includes(n));
+              if (qaOnly) filtered = filtered.filter((n) => QA_MEMBERS.includes(n));
+              if (noRepeats) filtered = filtered.filter((n) => !history.includes(n));
+              return filtered;
+            })()}
+            onWinner={(name) => setHistory((h) => [name, ...h])}
+          />
         </main>
 
-        {history.length > 0 && (
-          <div className="pr-history">
-            <div className="pr-history__header">
-              <h2>PR Assignees</h2>
-              <button
-                type="button"
-                className="team-members__clear-btn"
-                onClick={() => setHistory([])}
-              >
-                Clear
-              </button>
-            </div>
-            <ol className="pr-history__list">
-              {history.map((name, i) => (
-                <li key={i} className="pr-history__item">
-                  <span className="pr-history__rank">#{history.length - i}</span>
-                  <span>{name}</span>
-                </li>
-              ))}
-            </ol>
+        <div className="pr-history" style={{ visibility: history.length > 0 ? 'visible' : 'hidden' }}>
+          <div className="pr-history__header">
+            <h2>PR Assignees</h2>
+            <button
+              type="button"
+              className="team-members__clear-btn"
+              onClick={() => setHistory([])}
+            >
+              Clear
+            </button>
           </div>
-        )}
+          <ol className="pr-history__list">
+            {history.map((name, i) => (
+              <li key={i} className="pr-history__item">
+                <span className="pr-history__rank">#{history.length - i}</span>
+                <span>{name}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </>
   );
