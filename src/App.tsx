@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import './App.css';
-import Wheel from './Wheel';
+import Wheel, { SOUND_OPTIONS } from './Wheel';
 
 function App() {
   const [names, setNames] = useState<string[]>([]);
@@ -11,6 +11,7 @@ function App() {
   const [devsOnly, setDevsOnly] = useState(false);
   const [qaOnly, setQaOnly] = useState(false);
   const [wheelKey, setWheelKey] = useState(0);
+  const [sound, setSound] = useState('evil-laugh');
 
   const QA_MEMBERS = ['Regina', 'Sage'];
   const CMD_R_TEAM = ['Matt', 'Deepak', 'Joey', 'Mohan', 'Ly', 'Regina', 'Sage'];
@@ -115,6 +116,18 @@ function App() {
           </button>
 
           <div className="wheel-filters">
+            <label className="sound-picker">
+              <span className="sound-picker__label">🔊 Winner sound</span>
+              <select
+                className="sound-picker__select"
+                value={sound}
+                onChange={(e) => setSound(e.target.value)}
+              >
+                {SOUND_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id}>{opt.label}</option>
+                ))}
+              </select>
+            </label>
             <label className="no-repeats-toggle">
               <input
                 type="checkbox"
@@ -207,6 +220,7 @@ function App() {
               return filtered;
             })()}
             onWinner={(name) => setHistory((h) => [name, ...h])}
+            sound={sound}
           />
         </main>
 

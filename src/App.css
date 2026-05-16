@@ -101,6 +101,35 @@ p {
   color: var(--accent);
 }
 
+/* ── Sound picker ── */
+.sound-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.sound-picker__label {
+  white-space: nowrap;
+}
+
+.sound-picker__select {
+  background: #1f2028;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.sound-picker__select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ── Wheel filters (no repeats, devs only, QA only) ── */
 .wheel-filters {
   display: flex;

@@ -5,12 +5,22 @@ const COLORS = [
   '#a8dadc', '#6a4c93', '#f77f00', '#4cc9f0', '#b5179e',
 ];
 
+export const SOUND_OPTIONS = [
+  { id: 'evil-laugh', label: '😈 Evil Laugh' },
+  { id: 'sad-trombone', label: '😢 Sad Trombone' },
+  { id: 'airhorn', label: '📯 Airhorn' },
+  { id: 'dramatic-sting', label: '🎭 Dramatic Sting' },
+  { id: 'fanfare', label: '🎺 Fanfare' },
+  { id: 'price-is-right', label: '📺 Price is Right' },
+];
+
 interface WheelProps {
   names: string[];
   onWinner?: (name: string) => void;
+  sound?: string;
 }
 
-export default function Wheel({ names, onWinner }: WheelProps) {
+export default function Wheel({ names, onWinner, sound = 'evil-laugh' }: WheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
@@ -133,6 +143,133 @@ export default function Wheel({ names, onWinner }: WheelProps) {
     } catch (_) { /* ignore */ }
   };
 
+  const playEvilLaugh = (ctx: AudioContext) => {
+    const now = ctx.currentTime;
+    const laughPitches = [180, 220, 260, 300, 280, 240, 200, 170];
+    laughPitches.forEach((pitch, i) => {
+      const t = now + i * 0.18;
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(pitch, t);
+      osc.frequency.linearRampToValueAtTime(pitch * 0.85, t + 0.12);
+      filter.type = 'bandpass';
+      filter.frequency.value = 900;
+      filter.Q.value = 2.5;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.45, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.15);
+    });
+  };
+
+  const playSadTrombone = (ctx: AudioContext) => {
+    const now = ctx.currentTime;
+    const notes = [466, 415, 370, 277]; // Bb4, Ab4, F#4, Db4
+    notes.forEach((freq, i) => {
+      const t = now + i * 0.28;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.35, t + 0.04);
+      gain.gain.setValueAtTime(0.35, t + 0.22);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.3);
+    });
+  };
+
+  const playAirhorn = (ctx: AudioContext) => {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth'; osc.frequency.value = 233;
+    osc2.type = 'sawtooth'; osc2.frequency.value = 349;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.5, now + 0.02);
+    gain.gain.setValueAtTime(0.5, now + 0.6);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+    osc.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
+    osc.start(now); osc.stop(now + 0.9);
+    osc2.start(now); osc2.stop(now + 0.9);
+  };
+
+  const playDramaticSting = (ctx: AudioContext) => {
+    const now = ctx.currentTime;
+    const playNote = (freq: number, t: number, dur: number, vol = 0.35) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + dur);
+    };
+    playNote(196, now, 0.18);
+    playNote(196, now + 0.22, 0.18);
+    playNote(185, now + 0.44, 0.55, 0.45);
+    const rumble = ctx.createOscillator();
+    const rg = ctx.createGain();
+    rumble.type = 'sawtooth'; rumble.frequency.value = 55;
+    rg.gain.setValueAtTime(0.2, now + 0.44);
+    rg.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+    rumble.connect(rg); rg.connect(ctx.destination);
+    rumble.start(now + 0.44); rumble.stop(now + 1.1);
+  };
+
+  const playFanfare = (ctx: AudioContext) => {
+    const now = ctx.currentTime;
+    const notes = [261, 329, 392, 523, 659, 784];
+    notes.forEach((freq, i) => {
+      const t = now + i * 0.1;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.2);
+    });
+  };
+
+  const playPriceIsRight = (ctx: AudioContext) => {
+    const now = ctx.currentTime;
+    // "wah wah wah wahhh" — descending chromatic
+    const notes = [392, 370, 349, 311, 277];
+    notes.forEach((freq, i) => {
+      const t = now + i * 0.22;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.4, t + 0.03);
+      gain.gain.setValueAtTime(0.4, t + 0.16);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.24);
+    });
+  };
+
+  const playDeathSound = (soundId: string) => {
+    try {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
+      const ctx = audioCtxRef.current;
+      switch (soundId) {
+        case 'evil-laugh': playEvilLaugh(ctx); break;
+        case 'sad-trombone': playSadTrombone(ctx); break;
+        case 'airhorn': playAirhorn(ctx); break;
+        case 'dramatic-sting': playDramaticSting(ctx); break;
+        case 'fanfare': playFanfare(ctx); break;
+        case 'price-is-right': playPriceIsRight(ctx); break;
+      }
+    } catch (_) { /* ignore */ }
+  };
+
   const spin = () => {
     if (spinning || names.length === 0) return;
     setWinner(null);
@@ -182,6 +319,7 @@ export default function Wheel({ names, onWinner }: WheelProps) {
         setSpinning(false);
         setWinner(names[winnerIndex]);
         onWinner?.(names[winnerIndex]);
+        playDeathSound(sound);
       }
     };
 
