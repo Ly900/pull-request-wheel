@@ -7,9 +7,10 @@ const COLORS = [
 
 interface WheelProps {
   names: string[];
+  onWinner?: (name: string) => void;
 }
 
-export default function Wheel({ names }: WheelProps) {
+export default function Wheel({ names, onWinner }: WheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
@@ -20,9 +21,11 @@ export default function Wheel({ names }: WheelProps) {
   // Responsively size the canvas to fit the viewport height
   useEffect(() => {
     const updateSize = () => {
+      // On mobile, constrain to viewport width minus padding
+      const maxByWidth = window.innerWidth - 48;
       // Reserve ~380px for header, paragraph, input, buttons, padding
-      const available = window.innerHeight - 380;
-      const size = Math.max(240, Math.min(460, available));
+      const maxByHeight = window.innerHeight - 380;
+      const size = Math.max(200, Math.min(460, maxByWidth, maxByHeight));
       setCanvasSize(size);
     };
     updateSize();
@@ -141,6 +144,7 @@ export default function Wheel({ names }: WheelProps) {
         rotationRef.current = endRotation;
         setSpinning(false);
         setWinner(names[winnerIndex]);
+        onWinner?.(names[winnerIndex]);
       }
     };
 
@@ -151,23 +155,25 @@ export default function Wheel({ names }: WheelProps) {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, []);
 
-  if (names.length === 0) {
-    return <p className="wheel__empty">Add team members to spin the wheel!</p>;
-  }
-
   return (
     <div className="wheel">
-      <canvas
-        ref={canvasRef}
-        width={canvasSize}
-        height={canvasSize}
-        className="wheel__canvas"
-      />
+      {names.length === 0 ? (
+        <div className="wheel__placeholder">
+          <p className="wheel__empty">Add team members to spin the wheel!</p>
+        </div>
+      ) : (
+        <canvas
+          ref={canvasRef}
+          width={canvasSize}
+          height={canvasSize}
+          className="wheel__canvas"
+        />
+      )}
       <button
         type="button"
         className="wheel__spin-btn"
         onClick={spin}
-        disabled={spinning}
+        disabled={spinning || names.length === 0}
       >
         {spinning ? 'Spinning…' : 'Spin!'}
       </button>

@@ -9,13 +9,13 @@ p {
   grid-template-columns: 1fr;
   gap: 0.5rem;
   margin-top: 1rem;
-  width: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 780px) {
   .layout {
-    grid-template-columns: 260px auto;
-    align-items: start;
+    grid-template-columns: 380px auto;
+    align-items: stretch;
     gap: 1rem;
     justify-content: center;
   }
@@ -27,12 +27,16 @@ p {
   flex-direction: column;
   gap: 1.5rem;
   margin-top: 1.5rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* ── Add dev form ── */
 .add-dev {
   display: flex;
   gap: 0.5rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .add-dev__input {
@@ -42,8 +46,9 @@ p {
   border-radius: 6px;
   background: #1f2028;
   color: var(--text-h);
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
+  width: 0;
 }
 
 .add-dev__input::placeholder {
@@ -88,6 +93,7 @@ p {
   padding: 0.4rem 0.75rem;
   cursor: pointer;
   text-align: left;
+  width: fit-content;
   transition: border-color 0.15s, color 0.15s;
 }
 
@@ -175,11 +181,48 @@ p {
   color: #f87171;
 }
 
+/* ── PR History ── */
+.pr-history__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.pr-history__header h2 {
+  margin: 0;
+}
+
+.pr-history__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pr-history__item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  color: var(--text-h);
+  text-align: left;
+}
+
+.pr-history__rank {
+  font-size: 0.75rem;
+  color: var(--text);
+  min-width: 1.8rem;
+}
+
 /* ── Right wheel area ── */
 .wheel-area {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
 }
 
 
@@ -226,10 +269,18 @@ p {
   max-width: none;
 }
 
+.wheel__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+}
+
 .wheel__empty {
   color: var(--text);
   font-size: 0.95rem;
   text-align: center;
-  max-width: none;
+  max-width: 16rem;
   margin: 0;
+  padding: 1.5rem;
 }
