@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import Wheel from './Wheel';
 
 function App() {
   const [names, setNames] = useState<string[]>([]);
@@ -114,7 +115,7 @@ function App() {
         </aside>
 
         <main className="wheel-area">
-          {/* Wheel will be rendered here */}
+          <Wheel names={names} />
         </main>
       </div>
     </>

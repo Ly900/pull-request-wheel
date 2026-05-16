@@ -46,10 +46,14 @@ p {
   font-size: 1rem;
   border: 1px solid #9ca3af;
   border-radius: 6px;
-  background: var(--bg);
+  background: #1f2028;
   color: var(--text-h);
   flex: 1;
   min-width: 0;
+}
+
+.add-dev__input::placeholder {
+  color: #6b7280;
 }
 
 .add-dev__input:focus {
@@ -186,4 +190,55 @@ p {
   justify-content: center;
   border: 2px dashed var(--border);
   border-radius: 12px;
+}
+
+/* ── Wheel component ── */
+.wheel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.wheel__canvas {
+  display: block;
+  max-width: 100%;
+}
+
+.wheel__spin-btn {
+  padding: 0.6rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  cursor: pointer;
+  transition: box-shadow 0.2s, opacity 0.2s;
+  letter-spacing: 0.03em;
+}
+
+.wheel__spin-btn:hover:not(:disabled) {
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
+}
+
+.wheel__spin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wheel__result {
+  font-size: 1.2rem;
+  color: var(--text-h);
+  margin: 0;
+  text-align: center;
+  max-width: none;
+}
+
+.wheel__empty {
+  color: var(--text);
+  font-size: 0.95rem;
+  text-align: center;
+  max-width: none;
+  margin: 0;
 }
